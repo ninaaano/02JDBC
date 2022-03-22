@@ -1,0 +1,279 @@
+SELECT * FROM COUNTRIES;
+
+desc countries;
+
+DEPARTMENTS
+department_id
+department_name
+manager_id
+location_id;
+
+EMPLOYEES
+employee_id
+first_name
+last_name
+email
+phone_number
+hire_Date
+job_id
+salary
+commission_pct
+manager_id
+department_id
+
+select
+department_id, rank() over (order by salary desc) ranking, salary
+from employees;
+
+select
+department_id,
+rank() over(partition by department_id ORDER BY salary DESC) RANKING,
+SALARY
+FROM employees;
+
+PROB 01.
+
+자신이 속한 부서의 평균연봉보다 많은 연봉을 받는 
+사원의 아이디(employee_id), 부서아이디(department_id),연봉(salary), 부서의 평균 연봉 자주 조회
+서브쿼리를 작성하지 말고 객체로 정의하여 필요 시 마다 객체의 이름으로 조희
+- 객체의 이름은 SALARY_INFO
+- 컬럼 ALIAS를 지정하여 출력
+- 부서 평균 연봉은 반올림 하여 정수로 출력
+- 부서 평균 연봉이 많은 사람부터 먼저 출력
+
+SELECT
+e.employee_id 사번, 
+e.department_id 부서번호,
+e.salary 연봉, vt.avgsal 부서평균연봉
+FROM employees e,
+(select
+department_id, round(avg(salary),0) avgsal
+from employees
+GROUP BY department_id) vt
+WHERE e.department_id = vt.department_id AND e.salary > vt.avgsal
+ORDER BY vt.avgsal DESC;
+
+
+// 두번째 쿼리
+SELECT
+department_id, ROUND(AVG(salary),0)
+FROM employees
+GROUP BY department_id;
+
+/////////// 병문
+
+
+select
+e.employee_id 사번, e.department_id 부서번호, e.salary 연봉, vt.AVG 평균연봉
+from employees e,(select department_id, round(avg(salary),0) AVG
+               from employees
+               group by department_id) vt
+where e.department_id=vt.department_id
+      and e.salary>vt.avg
+order by vt.avg desc;
+
+/////// 미연
+
+select
+e.employee_id 사번, e.department_id 부서번호, e.salary 연봉, vt.avgsal 부서평균연봉 
+from employees e,
+(select
+department_id, round(avg(salary),0) avgsal
+from employees 
+group by department_id) vt
+where (e.department_id = vt.department_id) and (e.salary > vt.avgsal)
+order by 부서평균연봉 DESC;
+
+
+
+
+Prob 02.
+
+employees 테이블에서 급여를 많이 받는 순서대로 조회했을때
+6-10번째까지 5명의 last_name, first_name, salary를 조회하는
+/// 내거
+select
+vt.ranking,e.last_name,e.first_name,e.salary
+from employees e, (select
+RANK() OVER(ORDER BY salary DESC) RANKING,salary
+from employees) vt
+where e.salary = vt.salary AND vt.ranking between 6 and 10
+group by vt.ranking,e.last_name,e.first_name,e.salary
+ORDER BY vt.ranking DESC;
+
+
+
+/// 두번째 쿼리
+select
+RANK() OVER(ORDER BY salary DESC) RANKING
+from employees;
+
+
+///// 미연
+select
+vt.ranking, e.last_name, e.first_name, e.salary
+from employees e, (select
+rank() over(order by salary desc) ranking, salary, last_name, first_name
+from employees) vt
+where vt.salary = e.salary and 
+	  vt.first_name = e.first_name AND
+	  vt.last_name = e.last_name AND
+	  vt.ranking BETWEEN 6 AND 10;
+
+///// 병문
+select
+vt.Ranking, e.LAST_NAME, e.FIRST_NAME, e.SALARY
+from employees e,(select
+                RANK() OVER (order by salary desc) RANKING, salary
+                from employees) vt
+where vt.Ranking Between 6 and 10
+      and e.salary = vt.salary
+group by e.last_name, e.first_name,e.salary,vt.Ranking
+order by vt.ranking;
+
+
+Prob 03. 
+
+select
+to_char(e.hire_date,'yyyy') 년도, TO_CHAR(avg(salary),'999,999') 평균급여
+from employees e, jobs j
+where e.job_id = j.job_id AND job_title = 'Sales Manager'
+GROUP BY to_char(e.hire_date,'yyyy')
+ORDER BY to_char(e.hire_date,'yyyy');
+
+
+
+select
+to_char(hire_date,'yyyy') 년도
+FROM employees
+group by hire_date;
+
+///미연
+SELECT
+vt.년도 년도, avg(e.salary) 평균급여
+from employees e, (select 
+					to_char(e.hire_date,'yyyy') 년도
+					from employees e, jobs j
+					where e.job_id = j.job_id and j.job_title IN 'Sales Manager'
+					group by hire_date) vt , jobs j	
+where e.job_id = j.job_id
+	  and j.job_title IN 'Sales Manager'
+group by 년도;
+
+
+
+PROB 04.
+
+select
+e.last_name 사원이름, NVL(e1.last_name,'<없음>') 매니저이름, d.department_name 부서이름
+from employees E, employees E1, departments D, locations L
+where e.manager_id = e1.employee_id(+) 
+AND e.department_id = d.department_id 
+AND d.location_id = L.location_id
+AND l.city = 'Seattle'
+ORDER BY e.last_name;
+
+
+
+///
+select
+e.last_name 사원이름, NVL(e2.last_name,'<없음>') 매니저이름, d.department_name 부서이름
+from employees e, employees e2, departments d, locations l
+where e.manager_id = e2.employee_id(+)
+	and e.department_id = d.department_id
+	and d.location_id =l.location_id
+	and l.city = 'Seattle'
+Order by 사원이름 asc;
+
+
+
+select
+city
+from locations
+where city IN 'Seattle';
+
+select
+e1.last_name
+from emplyoees e1, employees e2
+where e1.employee_id = e2.manager_id
+group by e1.last_name;
+
+
+Prob 05.
+- 부서별 가장 적은 급여를 받고 있는 직원의 이름, 부서이름, 급여 출력
+- last_name,부서이름 오름차순 정렬 부서가 같은 경우 이름을 기준으로 오름차순으로 정렬
+
+select
+e.last_name 사원이름, d.department_name 부서이름, 
+e.salary 급여
+from employees e, departments d
+where e.department_id = d.department_id AND 
+(e.salary, d.department_name) IN (
+select
+MIN(e.salary),
+d.department_name
+from employees e, departments d
+where e.department_id = d.department_id
+GROUP BY d.department_name)
+ORDER BY d.department_name , e.last_name;
+
+////////
+select
+d.department_name
+MIN(e.salary)
+from employees e, departments d
+where e.department_id = d.department_id
+GROUP BY d.department_name,e.last_name
+
+
+Prob 06.
+
+- 각 도시에 있는 모든 부서 직원들의 평균 급여 조회
+- 평균 급여가 가장 낮은 도시부터 도시명과 평균연봉, 해당 도시의 직원 수 출력
+- 도시에 근무하는 직원이 10명이상인 곳은 제외
+
+select
+l.city 도시이름,
+AVG(e.salary) 평균급여,
+count(*) 직원수
+from employees e, departments d, locations l
+where e.department_id = d.department_id AND
+d.location_id = l.location_id
+GROUP BY l.city
+HAVING count(*) <= 10
+ORDER BY AVG(e.salary);
+
+
+
+Prob 07.
+- Dept 30
+- 30번 부서에 근무하는 사원들의 직책 별 평균급여가 2000이상인 직책과 그 직책의 평균 급여
+
+select
+j.job_title 직책,
+AVG(e.salary) 평균급여
+from employees e, jobs j
+where e.job_id = j.job_id AND e.department_id = '30'
+GROUP BY j.job_title
+HAVING AVG(e.salary) >= 2000;
+
+Prob 08.
+- public Accountant 의 직책으로 과거에 근무한 적이 있는 모든 사원의 사번과 이름을 출력
+(현재 public Accountant 의 직책으로 근무하는 사원은 고려하지 않습니다.)
+이름은 first_name, last_name을 아래와 같이 모두 출력
+
+select
+j1.employee_id 사번,
+e.first_name||' '||e.last_name 이름
+from job_history j1, jobs j2, employees e
+where j2.job_title = 'Public Accountant' AND
+e.employee_id = j1.employee_id
+AND 
+j1.job_id = j2.job_id;
+
+
+
+
+
+
+

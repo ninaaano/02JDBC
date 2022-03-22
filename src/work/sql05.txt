@@ -1,0 +1,35 @@
+05 Prob 01.
+
+-부서명
+-부서별 최소급여, 최대급여, 평균급여
+select
+d.department_name NAME,
+MIN(e.salary) MINSAL,
+MAX(e.salary) MAXSAL,
+AVG(e.salary) AVGSAL
+from employees e, departments d
+WHERE e.department_id = d.department_id
+GROUP BY d.department_name
+ORDER BY NAME;
+
+
+Prob 02.
+
+select
+e.employee_id,e.department_id,e.salary, AVG
+from employees e, (select
+d.department_id,
+AVG(e.salary) avg
+FROM employees e, departments d
+WHERE e.department_id = d.department_id
+GROUP BY d.department_id) vt
+WHERE e.salary > vt.avg AND
+e.department_id = vt.department_id;
+
+
+select
+d.department_id,
+AVG(e.salary)
+FROM employees e, departments d
+WHERE e.department_id = d.department_id
+GROUP BY d.department_id;

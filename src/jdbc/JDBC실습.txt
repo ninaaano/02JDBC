@@ -1,0 +1,42 @@
+//=======================================
+//=========== JDBC 실습 ==================
+//=======================================
+
+1. Example01.java (TABLE 생성)
+:: 아래의 TABLE을 생성하는 JDBC Progamming
+
+CREATE TABLE member(
+	no 		NUMBER,
+	id 		VARCHAR2(10),
+	pwd 	VARCHAR2(10)
+);
+
+실행 > Example01.java
+실행결과 > number TABLE 생성완료
+
+2. Example02.java (data 입력)
+
+:: 인자값 3개를 받아 TABLE에 INSERT
+args[0] : member TABLE의 no 
+args[1] : member TABLE의 id 
+args[2] : member TABLE의 pwd 
+
+실행 > Example02.java
+실행결과 > number TABLE data INSERT 완료
+
+3. Example03.java (data 삭제)
+:: 인자값으로 1개 받아 TABLE RECORD 삭제
+args[0] : member table에 id 
+
+실행 > Example03.java
+실행결과 > number TABLE RECORD DELETE 완료
+
+3. Example04.java (data 검색)
+
+:: 입력된 RECORD 수 무관하게 아래와 같이 display
+실행 > Example04.java
+실행결과 >
+
+회원정보 => 번호 : 1, id : angel, pwd : 1004
+회원정보 => 번호 : ~~, id : ~~, pwd : ~~
+회원정보 => 번호 : ~~, id : ~~, pwd : ~~

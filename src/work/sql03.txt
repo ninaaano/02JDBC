@@ -1,0 +1,17 @@
+03 Prob 01
+
+select
+e2.last_name,e2.salary
+from employees e1, employees e2
+where e1.employee_id = e2.manager_id AND e1.salary < e2.salary;
+
+prob 04
+
+select
+first_name,last_name,salary
+from employees
+where job_id IN (
+select 
+job_id
+from jobs
+where job_title IN 'Sales Representative') AND salary BETWEEN 9000 AND 10000;

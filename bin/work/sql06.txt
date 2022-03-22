@@ -1,0 +1,33 @@
+06 Prob 01.
+
+-80년대 입사한 직원의 이름, 입사일, 관리자 사번, 관리자 이름
+select
+e1.first_name, e1.hire_date , e2.employee_id, e2.first_name
+from employees e1, employees e2
+where e1.manager_id = e2.employee_id(+) AND
+e1.hire_date BETWEEN '80/01/01' AND '89/12/31';
+
+prob 02.
+
+-Sales 부서
+-직원의 이름 first_name
+-급여 salary
+-부서이름 department_name
+-급여는 100번 부서의 평균보다 적게 받는 직원 정보만 출력
+-100번 부서는 Finance
+
+select
+e.first_name,e.salary,d.department_name
+from employees e, departments d
+where e.department_id = d.department_id AND d.department_name = 'Sales'
+AND e.salary < (
+select
+avg(salary)
+from employees
+where department_id = '100');
+
+
+select
+avg(salary)
+from employees
+where department_id = '100';

@@ -1,0 +1,21 @@
+04 Prob 01.
+
+select
+j.job_title, sum(e.salary)
+from employees e, jobs j
+where e.job_id = j.job_id
+GROUP BY j.job_title
+HAVING sum(e.salary) > 30000
+ORDER BY sum(e.salary) DESC;
+
+Prob 02.
+
+select
+e.employee_id, e.first_name, j.job_title, d.department_name
+from employees E, jobs J, departments D,locations L
+where e.job_id = j.job_id AND e.department_id = d.department_id AND d.location_id = l.location_id
+AND l.city = (
+select
+city
+from locations
+where city IN 'Seattle');

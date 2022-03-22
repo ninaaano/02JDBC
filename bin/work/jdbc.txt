@@ -1,0 +1,49 @@
+SELECT
+e.employee_id ,
+d.department_name,
+e.salary
+FROM employees e, departments d, (
+SELECT
+AVG(e.salary)
+FROM employees e, departments d
+WHERE e.department_id = d.department_id 
+AND d.department_id = 30)
+WHERE e.department_id = d.department_id AND d.department_id = 30
+
+SELECT
+e.employee_id ,
+d.department_name,
+e.salary,
+vt.salary
+FROM employees e, departments d, (
+SELECT
+AVG(salary) salary,
+department_id
+FROM employees
+GROUP BY department_id) vt
+WHERE e.department_id = d.department_id
+AND vt.department_id = e.department_id
+AND d.department_id = 30;
+
+
+
+SELECT
+e.last_name,
+d.department_name
+From employees e, departments d, locations l
+WHERE e.department_id = d.department_id
+AND d.location_id = l.location_id
+AND l.city = 'South San Francisco'
+AND e.salary Between 7000 AND 10000
+
+
+SELECT
+l.city,
+d.department_name,
+e.first_name,
+e.salary
+FROM employees e, departments d, locations l
+WHERE e.department_id = d.department_id
+AND d.location_id = l.location_id
+AND upper(l.city) LIKE upper('%south%') 
+AND upper(d.department_name) LIKE upper('%it%');
